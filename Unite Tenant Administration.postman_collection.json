@@ -142,8 +142,7 @@
 					"var refresh_url     = pm.environment.get('refresh_url');",
 					"var unite_id       = pm.environment.get('unite_id');",
 					"var unite_secret   = pm.environment.get('unite_secret');",
-					"// to accept deprecated env variable name refresh_token:",
-					"var refresh_token   = pm.environment.get('tenant_refresh_token') || pm.environment.get('refresh_token');",
+					"var refresh_token   = pm.environment.get('tenant_refresh_token');",
 					"",
 					"var last_tenant_token_update = pm.environment.get('last_tenant_token_update_' + unite_id);",
 					"",
@@ -161,7 +160,7 @@
 					"    header: 'Content-Type:application/json',",
 					"    body: {",
 					"        mode: 'raw',",
-					"        raw: JSON.stringify({ 'unite_id': unite_id,'unite_secret': unite_secret,'grant_type':'refresh_token','refresh_token': refresh_token,'scope': 'offline_access'})",
+					"        raw: JSON.stringify({ 'client_id': unite_id,'client_secret': unite_secret,'grant_type':'refresh_token','refresh_token': refresh_token,'scope': 'offline_access'})",
 					"    }",
 					"  }, function (err, res) {",
 					"    if (err) {",
@@ -177,7 +176,6 @@
 					"  });",
 					"",
 					"}",
-					"// This needs to be done in any case!",
 					"pm.environment.set('tenant_token', pm.environment.get('tenant_token_' + unite_id));"
 				]
 			}
