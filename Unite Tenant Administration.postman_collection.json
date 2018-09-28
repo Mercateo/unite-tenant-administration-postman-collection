@@ -1,0 +1,220 @@
+{
+	"info": {
+		"name": "Unite Tenant Administration",
+		"_postman_id": "5ee69a63-99f6-b0f0-8db2-dfb1ec76d820",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Api Entry Point",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "Entry point to API"
+			},
+			"response": []
+		},
+		{
+			"name": "Tenant Administration Entry Point",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/api/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						""
+					]
+				},
+				"description": "Entry point to Tenant Administration Api"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Company",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/api/tenant/companies/<some id>",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tenant",
+						"companies",
+						"<some id>"
+					]
+				},
+				"description": "Get a specifc company within the Tenant by specifying its Id"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Companies",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/api/tenant/companies",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tenant",
+						"companies"
+					]
+				},
+				"description": "Get all companies within Tenant"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Company",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.mercateo-unite.administration.v1+json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Mercateo AG\",\n\t\"vatId\":\"DE205372170\",\n\t\"address\" : {\n    \t\"street\": \"Fürstenfelder Str. 5\",\n    \t\"additionalAddressInformation\": \"Kaufingertor Passage\",\n    \t\"locality\": \"München\",\n    \t\"postalCode\": \"80331\",\n    \t\"countryCode\": \"DE\"\n\t},\n\t\"contact\" : {\n    \t\"name\": \"Mercateo AG\",\n    \t\"email\": \"service@mercateo.com\",\n    \t\"phone\": \"+49(0)8912140777\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/tenant/companies",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tenant",
+						"companies"
+					]
+				},
+				"description": "Create a new company within the Tenant"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{tenant_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "1142abba-f549-403c-8366-6f6ea4b3adac",
+				"type": "text/javascript",
+				"exec": [
+					"var refresh_url     = pm.environment.get('refresh_url');",
+					"var unite_id       = pm.environment.get('unite_id');",
+					"var unite_secret   = pm.environment.get('unite_secret');",
+					"// to accept deprecated env variable name refresh_token:",
+					"var refresh_token   = pm.environment.get('tenant_refresh_token') || pm.environment.get('refresh_token');",
+					"",
+					"var last_tenant_token_update = pm.environment.get('last_tenant_token_update_' + unite_id);",
+					"",
+					"var now = new Date().getTime();",
+					"var someTimeAgo = now - 50000000;",
+					"",
+					"if (!!last_tenant_token_update && last_tenant_token_update > someTimeAgo){",
+					"    console.log('Skipping token update for unite_id ' + unite_id + '.');",
+					"",
+					"} else {",
+					"",
+					"  pm.sendRequest({",
+					"    url: refresh_url,",
+					"    method: 'POST',",
+					"    header: 'Content-Type:application/json',",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify({ 'unite_id': unite_id,'unite_secret': unite_secret,'grant_type':'refresh_token','refresh_token': refresh_token,'scope': 'offline_access'})",
+					"    }",
+					"  }, function (err, res) {",
+					"    if (err) {",
+					"        console.log('Error fetching access token', err);",
+					"        throw new Error('Error fetching access token: ' + err);",
+					"    }",
+					"    if (res.code !== 200) {",
+					"        console.log('Error fetching access token - res.code !== 200: ', res.code, res.json());",
+					"        throw new Error('Error fetching access token: Got response ' + res.status);",
+					"    }",
+					"    pm.environment.set('tenant_token_' + unite_id, res.json().access_token);",
+					"    pm.environment.set('last_tenant_token_update_' + unite_id, new Date().getTime());",
+					"  });",
+					"",
+					"}",
+					"// This needs to be done in any case!",
+					"pm.environment.set('tenant_token', pm.environment.get('tenant_token_' + unite_id));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "ea462f31-3dbf-4415-9ce1-c78d6bf26f80",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
