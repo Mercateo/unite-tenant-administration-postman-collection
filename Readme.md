@@ -3,7 +3,7 @@
 ## How to use the application
 
 * Install Postman `https://www.getpostman.com/`
-* Edit `Unite Production.postman_environment.json` in order to use the integration environment by entering the value of your
+* Edit `Unite Integration.postman_environment` in order to use the integration environment by entering the value of your
     * `unite_id`
     * `unite_secret`
     * `tenant_refresh_token`
