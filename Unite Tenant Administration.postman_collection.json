@@ -7,30 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "Api Entry Point",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/vnd.mercateo-unite.administration.v1+json"
-					}
-				],
-				"body": {},
-				"url": {
-					"raw": "{{url}}/",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						""
-					]
-				},
-				"description": "Entry point to API"
-			},
-			"response": []
-		},
-		{
 			"name": "Tenant Administration Entry Point",
 			"request": {
 				"method": "GET",
